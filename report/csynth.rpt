@@ -1,0 +1,113 @@
+
+
+================================================================
+== Synthesis Summary Report of 'fir_wrap'
+================================================================
++ General Information: 
+    * Date:           Tue Aug  9 16:07:13 2022
+    * Version:        2021.1 (Build 3247384 on Thu Jun 10 19:36:33 MDT 2021)
+    * Project:        fir_hls_prj
+    * Solution:       solution1 (Vivado IP Flow Target)
+    * Product family: zynq
+    * Target device:  xc7z020-clg484-1
+    
+
++ Performance & Resource Estimates: 
+    
+    PS: '+' for module; 'o' for loop; '*' for dataflow
+    +-------------------------------------------------+--------+-------+---------+-----------+----------+---------+------+----------+--------+------------+-------------+------------+-----+
+    |                     Modules                     |  Issue |       | Latency |  Latency  | Iteration|         | Trip |          |        |            |             |            |     |
+    |                     & Loops                     |  Type  | Slack | (cycles)|    (ns)   |  Latency | Interval| Count| Pipelined|  BRAM  |     DSP    |      FF     |     LUT    | URAM|
+    +-------------------------------------------------+--------+-------+---------+-----------+----------+---------+------+----------+--------+------------+-------------+------------+-----+
+    |+ fir_wrap                                       |  Timing|  -0.00|        -|          -|         -|        -|     -|        no|  4 (1%)|  297 (135%)|  29399 (27%)|  9983 (18%)|    -|
+    | + grp_fir_wrap_Pipeline_VITIS_LOOP_41_1_fu_491  |  Timing|  -0.00|      101|  1.010e+03|         -|      101|     -|        no|       -|           -|     17 (~0%)|    73 (~0%)|    -|
+    |  o VITIS_LOOP_41_1                              |       -|   7.30|       99|    990.000|         2|        1|    99|       yes|       -|           -|            -|           -|    -|
+    | + grp_fir_wrap_Pipeline_VITIS_LOOP_47_2_fu_696  |  Timing|  -0.00|        -|          -|         -|        -|     -|        no|       -|  297 (135%)|  25156 (23%)|  8501 (15%)|    -|
+    |  + grp_fir_fu_498                               |       -|   0.38|        7|     70.000|         -|        1|     -|       yes|       -|  297 (135%)|  24823 (23%)|  8186 (15%)|    -|
+    |  o VITIS_LOOP_47_2                              |       -|   7.30|        -|          -|        23|        1|     -|       yes|       -|           -|            -|           -|    -|
+    +-------------------------------------------------+--------+-------+---------+-----------+----------+---------+------+----------+--------+------------+-------------+------------+-----+
+
+
+================================================================
+== HW Interfaces
+================================================================
+* M_AXI
++------------+------------+---------------+---------+--------+----------+-----------+--------------+--------------+-------------+-------------+
+| Interface  | Data Width | Address Width | Latency | Offset | Register | Max Widen | Max Read     | Max Write    | Num Read    | Num Write   |
+|            | (SW->HW)   |               |         |        |          | Bitwidth  | Burst Length | Burst Length | Outstanding | Outstanding |
++------------+------------+---------------+---------+--------+----------+-----------+--------------+--------------+-------------+-------------+
+| m_axi_gmem | 32 -> 32   | 64            | 0       | slave  | 0        | 0         | 16           | 16           | 16          | 16          |
++------------+------------+---------------+---------+--------+----------+-----------+--------------+--------------+-------------+-------------+
+
+* S_AXILITE
++---------------+------------+---------------+--------+----------+
+| Interface     | Data Width | Address Width | Offset | Register |
++---------------+------------+---------------+--------+----------+
+| s_axi_CTRL    | 32         | 5             | 16     | 0        |
+| s_axi_control | 32         | 6             | 16     | 0        |
++---------------+------------+---------------+--------+----------+
+
+* TOP LEVEL CONTROL
++-----------+------------+-----------+
+| Interface | Type       | Ports     |
++-----------+------------+-----------+
+| ap_clk    | clock      | ap_clk    |
+| ap_rst_n  | reset      | ap_rst_n  |
+| interrupt | interrupt  | interrupt |
+| ap_ctrl   | ap_ctrl_hs |           |
++-----------+------------+-----------+
+
+
+================================================================
+== SW I/O Information
+================================================================
+* Top Function Arguments
++----------+-----------+----------+
+| Argument | Direction | Datatype |
++----------+-----------+----------+
+| y        | inout     | int*     |
+| x        | inout     | int*     |
+| len      | in        | int      |
+| coef     | inout     | int*     |
++----------+-----------+----------+
+
+* SW-to-HW Mapping
++----------+----------------------+-----------+----------+-----------------------+
+| Argument | HW Name              | HW Type   | HW Usage | HW Info               |
++----------+----------------------+-----------+----------+-----------------------+
+| y        | m_axi_gmem           | interface |          |                       |
+| y        | s_axi_control y_1    | register  | offset   | offset=0x10, range=32 |
+| y        | s_axi_control y_2    | register  | offset   | offset=0x14, range=32 |
+| x        | m_axi_gmem           | interface |          |                       |
+| x        | s_axi_control x_1    | register  | offset   | offset=0x1c, range=32 |
+| x        | s_axi_control x_2    | register  | offset   | offset=0x20, range=32 |
+| len      | s_axi_CTRL len       | register  |          | offset=0x10, range=32 |
+| coef     | m_axi_gmem           | interface |          |                       |
+| coef     | s_axi_control coef_1 | register  | offset   | offset=0x28, range=32 |
+| coef     | s_axi_control coef_2 | register  | offset   | offset=0x2c, range=32 |
++----------+----------------------+-----------+----------+-----------------------+
+
+
+================================================================
+== M_AXI Burst Information
+================================================================
+* Burst Summary
++--------------+-----------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------+
+| HW Interface | Loop            | Message                                                                                                                                                                                                                 | Location      |
++--------------+-----------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------+
+| m_axi_gmem   | VITIS_LOOP_41_1 | Multiple burst reads of length 99 and bit width 32. These bursts requests might be further partitioned into multiple requests during RTL generation, based on max_read_burst_length or max_write_burst_length settings. | fir.cpp:41:19 |
++--------------+-----------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------+
+
+* Bursts and Widening Missed
++--------------+----------+-------------------------------------------------------------------------------------------------------------------+------------+---------------+
+| HW Interface | Variable | Problem                                                                                                           | Resolution | Location      |
++--------------+----------+-------------------------------------------------------------------------------------------------------------------+------------+---------------+
+| m_axi_gmem   | x        | Could not widen since the size of type 'i32' is greater than or equal to the max_widen_bitwidth threshold of '0'. |            | fir.cpp:47:19 |
+| m_axi_gmem   | 1        | Could not widen since the size of type 'i32' is greater than or equal to the max_widen_bitwidth threshold of '0'. |            | fir.cpp:47:19 |
+| m_axi_gmem   | coef     | Could not widen since the size of type 'i32' is greater than or equal to the max_widen_bitwidth threshold of '0'. |            | fir.cpp:41:19 |
+| m_axi_gmem   |          | Could not burst due to multiple potential reads to the same bundle in the same region.                            | 214-224    | fir.cpp:47:19 |
+| m_axi_gmem   |          | Could not burst due to multiple potential writes to the same bundle in the same region.                           | 214-224    | fir.cpp:47:19 |
++--------------+----------+-------------------------------------------------------------------------------------------------------------------+------------+---------------+
+
+    * Resolution URL: www.xilinx.com/cgi-bin/docs/rdoc?v=2021.1;t=hls+guidance;d=XXX-YYY.html (replace XXX-YYY with column value)
+
